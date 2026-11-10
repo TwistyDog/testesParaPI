@@ -2,11 +2,13 @@ import { Texto, Numero } from "./entrada";
 
 export let cadastrosCompetidores = [];
 
-export function Cadastrousuario(){
+export function CadastroUsuario(){
     let continuar;
 
     do {
         const nome = Texto("Informe seu nome completo: ");
+        const nomUsua = Texto("Informe seu nome de usuario: ");
+        const infoSenha = Numero("Informe sua senha: ");
         const infoEmail = Texto("Informe seu email: ");
         const infoCPF = Numero("Informe o numero do CPF: ");
         const dataNasc = Numero("Informe a data de nascimento: ");
@@ -15,6 +17,8 @@ export function Cadastrousuario(){
 
         const cadastroObj = {
             nome,
+            nomUsua,
+            infoSenha,
             infoEmail,
             infoCPF,
             dataNasc,
@@ -31,6 +35,34 @@ export function Cadastrousuario(){
     } while (continuar === "s");
 }
 
-export function Listarusarioscadastrados(listaUsuarios = cadastrosCompetidores){
+export function ListarUsariosCadastrados(listaUsuarios = cadastrosCompetidores){
+    if (listaUsuarios.length === 0){
+        console.log("Nenhum cadastro feito");
+        return;
+    }
 
+    console.log("\n================ Lista de Cadastros ==============");
+
+    listaUsuarios.forEach((usuarios) =>{
+        console.log(`Usuario: ${usuarios.nomUsua}`);
+        console.log(`Nome: ${usuarios.nome}`);
+        console.log(`CPF: ${usuarios.infoCPF}`);
+        console.log(`Data de Nascimento: ${usuarios.dataNasc}`);
+        console.log("---------------------------------");
+
+    })
+}
+
+
+export function BuscarUsuarioPorNome(nome, dataNasc){
+    const usuarioEncontrado = cadastrosCompetidores.find((usuario) =>{
+        return usuario.nome === nome && usuario.dataNasc === dataNasc;
+    });
+
+    return usuarioEncontrado || null;
+}
+
+export function ConsultarUsuario(){
+    const nome = Texto("Informe o nome completo: ");
+    const dataNasc = Texto
 }
