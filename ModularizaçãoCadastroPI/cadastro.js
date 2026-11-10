@@ -2,7 +2,7 @@ import { Texto, Numero } from "./entrada";
 
 export let cadastrosCompetidores = [];
 
-export function cadastroUsuario(){
+export function Cadastrousuario(){
     let continuar;
 
     do {
@@ -31,6 +31,6 @@ export function cadastroUsuario(){
     } while (continuar === "s");
 }
 
-export function listarUsariosCadastrados(listaUsuarios = cadastrosCompetidores){
-    
+export function Listarusarioscadastrados(listaUsuarios = cadastrosCompetidores){
+
 }
