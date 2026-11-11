@@ -1,4 +1,4 @@
-import { Texto, Numero } from "./entrada";
+import { Texto, Numero } from "./entrada.js";
 
 export let cadastrosCompetidores = [];
 
@@ -64,5 +64,17 @@ export function BuscarUsuarioPorNome(nome, dataNasc){
 
 export function ConsultarUsuario(){
     const nome = Texto("Informe o nome completo: ");
-    const dataNasc = Texto
+    const dataNasc = Texto("Informe sua data de nascimento: ");
+
+    const usuario = BuscarUsuarioPorNome(nome, dataNasc);
+
+    if (usuario !== null){
+        console.log("\nUsuario encontrado");
+        console.log(`Nome: ${usuario.nome}` );
+        console.log(`Usuario: ${usuario.nomUsua}`);
+        console.log(`Data de Nascimento: ${usuario.dataNasc}`);
+        console.log(`Email: ${usuario.infoEmail}`);
+    } else {
+        console.log("\nUsuario nao encontrado");
+    }
 }
