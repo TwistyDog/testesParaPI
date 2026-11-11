@@ -1,7 +1,7 @@
 import readline from "readline-sync";
 
 export function Texto(mensagen){
-    return realine.question(mensagen);
+    return readline.question(mensagen);
 }
 
 export function Numero(numero){

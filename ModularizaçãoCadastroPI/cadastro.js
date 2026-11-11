@@ -1,80 +1,304 @@
 import { Texto, Numero } from "./entrada.js";
 
 export let cadastrosCompetidores = [];
+export let cadastroDocente = [];
 
-export function CadastroUsuario(){
+function solicitarCampo(mensagem){
+    let valor;
+
+    do{
+        valor = Texto(mensagem).trim();
+
+        if (valor === ""){
+            console.log("Este campo e obrigatorio!");
+        }
+    } while (valor === "");
+
+    return valor;
+}
+
+function validarCPF(cpf){
+    cpf = cpf.replace(/\D/g, "");
+
+    // Verifica se possui 11 dígitos e se não são todos iguais
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
+        return false;
+    }
+
+    let soma = 0;
+
+    // Cálculo do primeiro dígito verificador
+    for (let i = 0; i < 9; i++) {
+        soma += Number(cpf[i]) * (10 - i);
+    }
+
+    let resto = soma % 11;
+
+    let primeiroDigito = resto < 2 ? 0 : 11 - resto;
+
+    if (primeiroDigito !== Number(cpf[9])) {
+        return false;
+    }
+
+    soma = 0;
+
+    // Cálculo do segundo dígito verificador
+    for (let i = 0; i < 10; i++) {
+        soma += Number(cpf[i]) * (11 - i);
+    }
+
+    resto = soma % 11;
+
+    let segundoDigito = resto < 2 ? 0 : 11 - resto;
+
+    return segundoDigito === Number(cpf[10]);
+}
+
+function verificarCPF(cpf){
+    const cpfCompetidor = cadastrosCompetidores.some(
+        usuario => usuario.infoCPF === cpf
+    );
+
+    const cpfDocente = cadastroDocente.some(
+        docente => docente.infoCPF === cpf
+    );
+
+    return cpfCompetidor || cpfDocente;
+}
+
+function soliCPF(){
+    let cpf;
+
+    do{
+        cpf = solicitarCampo("Informe o CPF: ");
+
+        cpf = cpf.replace(/\D/g, "");
+        
+        if (!validarCPF(cpf)){
+            console.log("CPF invalido! Tente novamente.");
+        } else if (verificarCPF(cpf)){
+            console.log("Esse CPF ja possui cadastro");
+        } else{
+            return cpf;
+        }
+    } while(true);
+}
+
+function valiEmail(email){
+    const formEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    return formEmail.test(email);
+}
+
+function solicEmail(){
+    let email;
+
+    do{
+        email = solicitarCampo("Informe seu email: ");
+
+        if (!valiEmail(email)){
+            console.log("Email invalido! Tente novamente");
+        }
+    } while (!valiEmail(email));
+
+    return email;
+}
+
+function valiDataNasc(data){
+
+    const formData = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+
+    const resultado = data.match(formData);
+
+    if (!resultado){
+        return false;
+    }
+
+    const dia = Number(resultado[1]);
+    const mes = Number(resultado[2]);
+    const ano = Number(resultado[3]);
+
+    const dataInfo = new Date(ano, mes - 1, dia);
+    const hoje = new Date();
+
+    if (
+        dataInfo.getFullYear() !== ano ||
+        dataInfo.getMonth() !== mes - 1 ||
+        dataInfo.getDate() !== dia 
+    ){
+        return false;
+    }
+
+    return dataInfo <= hoje;
+}
+
+function soliDataNas(){
+    
+    let data;
+    
+    do{
+        data = solicitarCampo(
+            "Informe a data de nascimento (DD/MM/AAAA): "
+        );
+
+        if (!valiDataNasc(data)){
+            console.log("Data Invalida! Tente novamente");
+        }
+    } while (!valiDataNasc(data));
+
+    return data;
+}
+
+function cadasPessoa(tipo, lista){
+
     let continuar;
 
-    do {
-        const nome = Texto("Informe seu nome completo: ");
-        const nomUsua = Texto("Informe seu nome de usuario: ");
-        const infoSenha = Numero("Informe sua senha: ");
-        const infoEmail = Texto("Informe seu email: ");
-        const infoCPF = Numero("Informe o numero do CPF: ");
-        const dataNasc = Numero("Informe a data de nascimento: ");
-        const infoCel = Numero("Informe seu numero para contato: ");
+    do{
+        console.log(`\n=================== Cadastro de ${tipo.toUpperCase()} ========`);
+
+        const nome = solicitarCampo("Informe seu nome completo: ");
+
+        const nomUsua = solicitarCampo(
+            "Informe seu nome de usuario: "
+        );
+
+        const infoSenha = solicitarCampo(
+            "Crie sua senha: "
+        );
+
+        const infoCPF = soliCPF();
+
+        const dataNas = soliDataNas();
+
+        const infoEmail = solicEmail();
+
+        const infoCel = solicitarCampo(
+            "Informe seu telefone para contato: "
+        );
+
+        const unidaOrigem = solicitarCampo(
+            "Informe a unidade de origem: "
+        );
+
+        const curso = solicitarCampo(
+            "Informe o curso vinculado: "
+        );
+
+        const ocup = solicitarCampo(
+            "Informe sua ocupacao: "
+        );
 
 
         const cadastroObj = {
             nome,
             nomUsua,
             infoSenha,
-            infoEmail,
             infoCPF,
-            dataNasc,
-            infoCel
-        }
+            dataNas,
+            infoEmail,
+            infoCel,
+            unidaOrigem,
+            curso,
+            ocup,
+            status: "Ativo",
+            tipo
+        };
 
-         cadastrosCompetidores.push(cadastroObj);
+        lista.push(cadastroObj);
 
-         console.log("Cadastro concluido com sucesso!!");
+        console.log(`\n${tipo} cadastrado com sucesso!`);
 
-         continuar = Texto(
-            "Deseja fazer outro cadastro?? (s/n): "
-        ).toLowerCase();
+        continuar = Texto(
+            "\n Deseja fazer outro cadastro? (s/n): "
+        ).toLocaleLowerCase().trim();
     } while (continuar === "s");
 }
 
-export function ListarUsariosCadastrados(listaUsuarios = cadastrosCompetidores){
-    if (listaUsuarios.length === 0){
-        console.log("Nenhum cadastro feito");
+export function CadastroCompetidor(){
+    cadasPessoa("Competidor", cadastrosCompetidores);
+}
+
+export function CadastrarDocente(){
+    cadasPessoa("Docente", cadastroDocente);
+}
+
+export function ListarUsuariosCadastrados(listaUsuarios = cadastrosCompetidores){
+    if (listaUsuarios.length === 0) {
+        console.log("\nNenhum cadastro encontrado!");
         return;
     }
 
-    console.log("\n================ Lista de Cadastros ==============");
+    console.log("\n========== LISTA DE CADASTROS ==========");
 
-    listaUsuarios.forEach((usuarios) =>{
-        console.log(`Usuario: ${usuarios.nomUsua}`);
-        console.log(`Nome: ${usuarios.nome}`);
-        console.log(`CPF: ${usuarios.infoCPF}`);
-        console.log(`Data de Nascimento: ${usuarios.dataNasc}`);
+    listaUsuarios.forEach((usuario, indice) => {
+
+        console.log(`\nCadastro ${indice + 1}`);
+        console.log(`Tipo: ${usuario.tipo}`);
+        console.log(`Nome: ${usuario.nome}`);
+        console.log(`Usuário: ${usuario.nomUsua}`);
+        console.log(`CPF: ${usuario.infoCPF}`);
+        console.log(`Data de Nascimento: ${usuario.dataNasc}`);
+        console.log(`E-mail: ${usuario.infoEmail}`);
+        console.log(`Telefone: ${usuario.infoCel}`);
+        console.log(`Unidade de Origem: ${usuario.unidadeOrigem}`);
+        console.log(`Curso: ${usuario.curso}`);
+        console.log(`Ocupação: ${usuario.ocupacao}`);
+        console.log(`Status: ${usuario.status}`);
+
         console.log("---------------------------------");
-
-    })
+    });
 }
 
 
-export function BuscarUsuarioPorNome(nome, dataNasc){
-    const usuarioEncontrado = cadastrosCompetidores.find((usuario) =>{
-        return usuario.nome === nome && usuario.dataNasc === dataNasc;
+export function BuscarUsuarioPorNome(nome, dataNas, listaUsuarios = cadastrosCompetidores){
+    const usuaEncon = listaUsuarios.find((usuario) =>{
+        return usuario.nome.toLocaleLowerCase() === nome.toLocaleLowerCase()
+              && usuario.dataNas === dataNas
     });
 
-    return usuarioEncontrado || null;
+    return usuaEncon || null;
 }
 
-export function ConsultarUsuario(){
+function consultarPessoa(tipo, lista) {
+
     const nome = Texto("Informe o nome completo: ");
-    const dataNasc = Texto("Informe sua data de nascimento: ");
 
-    const usuario = BuscarUsuarioPorNome(nome, dataNasc);
+    const dataNasc = Texto(
+        "Informe a data de nascimento (DD/MM/AAAA): "
+    );
 
-    if (usuario !== null){
-        console.log("\nUsuario encontrado");
-        console.log(`Nome: ${usuario.nome}` );
-        console.log(`Usuario: ${usuario.nomUsua}`);
+    const usuario = BuscarUsuarioPorNome(nome, dataNasc, lista);
+
+    if (usuario !== null) {
+
+        console.log(`\n${tipo} encontrado!`);
+
+        console.log(`Nome: ${usuario.nome}`);
+        console.log(`Usuário: ${usuario.nomUsua}`);
+        console.log(`CPF: ${usuario.infoCPF}`);
         console.log(`Data de Nascimento: ${usuario.dataNasc}`);
-        console.log(`Email: ${usuario.infoEmail}`);
+        console.log(`E-mail: ${usuario.infoEmail}`);
+        console.log(`Telefone: ${usuario.infoCel}`);
+        console.log(`Unidade: ${usuario.unidadeOrigem}`);
+        console.log(`Curso: ${usuario.curso}`);
+        console.log(`Ocupação: ${usuario.ocupacao}`);
+        console.log(`Status: ${usuario.status}`);
+
     } else {
-        console.log("\nUsuario nao encontrado");
+
+        console.log(`\n${tipo} não encontrado!`);
+
     }
+}
+
+
+// Consulta de competidores
+export function ConsultarCompetidor() {
+    consultarPessoa("Competidor", cadastrosCompetidores);
+}
+
+
+// Consulta de docentes
+export function ConsultarDocente() {
+    consultarPessoa("Docente", cadastroDocente);
 }
