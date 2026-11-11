@@ -194,12 +194,12 @@ function cadasPessoa(tipo, lista){
             nomUsua,
             infoSenha,
             infoCPF,
-            dataNas: dataNas,
+            dataNasc: dataNas,
             infoEmail,
             infoCel,
-            unidaOrigem: unidaOrigem,
+            unidadeOrigem: unidaOrigem,
             curso,
-            ocup: ocup,
+            ocupacao: ocup,
             status: "Ativo",
             tipo
         };
@@ -253,7 +253,7 @@ export function ListarUsuariosCadastrados(listaUsuarios = cadastrosCompetidores)
 export function BuscarUsuarioPorNome(nome, dataNas, listaUsuarios = cadastrosCompetidores){
     const usuaEncon = listaUsuarios.find((usuario) =>{
         return usuario.nome.toLocaleLowerCase() === nome.toLocaleLowerCase()
-              && usuario.dataNas === dataNas
+              && usuario.dataNasc === dataNas
     });
 
     return usuaEncon || null;
