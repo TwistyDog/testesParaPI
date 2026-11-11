@@ -194,12 +194,12 @@ function cadasPessoa(tipo, lista){
             nomUsua,
             infoSenha,
             infoCPF,
-            dataNas,
+            dataNas: dataNas,
             infoEmail,
             infoCel,
-            unidaOrigem,
+            unidaOrigem: unidaOrigem,
             curso,
-            ocup,
+            ocup: ocup,
             status: "Ativo",
             tipo
         };
