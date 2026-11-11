@@ -1,5 +1,5 @@
 import { Texto, Numero } from "./entrada.js";
-import{
+import {
     CadastroCompetidor,
     CadastrarDocente,
     ListarUsuariosCadastrados,
@@ -9,21 +9,31 @@ import{
     cadastroDocente
 } from "./cadastro.js";
 
-// Identifica o perfil de quem está acessando o sistema
+// Identifica o perfil de quem está acessando o sistema (aceita número ou texto)
 console.log("\n=== AUTENTICAÇÃO DO SISTEMA ===");
-const perfilLogado = Texto("Informe seu perfil de acesso (ex: Administrador, Coordenador, Competidor): ").trim().toLowerCase();
+console.log("1 - Administrador");
+console.log("2 - Coordenador");
+console.log("3 - Competidor");
+const entradaPerfil = Numero("Escolha o seu perfil (1, 2 ou 3): ");
+
+// Mapeia a entrada para a validação funcionar perfeitamente com números ou textos
+let perfilLogado = entradaPerfil;
+if (entradaPerfil === 1) perfilLogado = "administrador";
+if (entradaPerfil === 2) perfilLogado = "coordenador";
+if (entradaPerfil === 3) perfilLogado = "competidor";
 
 const ehAdministradorOuCoordenador = 
     perfilLogado === "administrador" || 
     perfilLogado === "coordenador" || 
-    perfilLogado === "coordenação";
+    perfilLogado === "coordenação" ||
+    perfilLogado === "coordenacao";
 
 let opcao;
 
 do {
     console.log("\n============== SISTEMA DE CADASTRO DE COMPETIDORES =================");
     
-    // RF-02: Se for Administrador ou Coordenador, exibe as opções de cadastro. Senão, elas ficam ocultas!
+    // Se for Administrador ou Coordenador, exibe as opções de cadastro. Senão, elas ficam ocultas!
     if (ehAdministradorOuCoordenador) {
         console.log("1 - Cadastrar competidor");
         console.log("2 - Cadastrar docente");
@@ -39,10 +49,18 @@ do {
 
     switch (opcao) {
         case 1:
+            if (!ehAdministradorOuCoordenador) {
+                console.log("Opção inválida!");
+                break;
+            }
             CadastroCompetidor(perfilLogado);
             break;
 
         case 2:
+            if (!ehAdministradorOuCoordenador) {
+                console.log("Opção inválida!");
+                break;
+            }
             CadastrarDocente(perfilLogado);
             break;
 
