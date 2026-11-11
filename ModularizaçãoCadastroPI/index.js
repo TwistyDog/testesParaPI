@@ -1,5 +1,4 @@
 import { Texto, Numero } from "./entrada.js";
-
 import{
     CadastroCompetidor,
     CadastrarDocente,
@@ -8,19 +7,30 @@ import{
     ConsultarDocente,
     cadastrosCompetidores,
     cadastroDocente
-
 } from "./cadastro.js";
 
+// Identifica o perfil de quem está acessando o sistema
+console.log("\n=== AUTENTICAÇÃO DO SISTEMA ===");
+const perfilLogado = Texto("Informe seu perfil de acesso (ex: Administrador, Coordenador, Competidor): ").trim().toLowerCase();
+
+const ehAdministradorOuCoordenador = 
+    perfilLogado === "administrador" || 
+    perfilLogado === "coordenador" || 
+    perfilLogado === "coordenação";
 
 let opcao;
 
 do {
     console.log("\n============== SISTEMA DE CADASTRO DE COMPETIDORES =================");
-    console.log("=======================================================================");
-    console.log("1 - Cadastrar competidor");
-    console.log("2 - Cadastrar docente");
+    
+    // RF-02: Se for Administrador ou Coordenador, exibe as opções de cadastro. Senão, elas ficam ocultas!
+    if (ehAdministradorOuCoordenador) {
+        console.log("1 - Cadastrar competidor");
+        console.log("2 - Cadastrar docente");
+    }
+    
     console.log("3 - Listar competidor");
-    console.log("4 - Listar docente ");
+    console.log("4 - Listar docente");
     console.log("5 - Consultar competidor");
     console.log("6 - Consultar docente");
     console.log("0 - Sair");
@@ -28,13 +38,12 @@ do {
     opcao = Numero("Escolha uma opcao: ");
 
     switch (opcao) {
-
         case 1:
-            CadastroCompetidor();
+            CadastroCompetidor(perfilLogado);
             break;
 
         case 2:
-            CadastrarDocente();
+            CadastrarDocente(perfilLogado);
             break;
 
         case 3:
@@ -60,7 +69,5 @@ do {
         default:
             console.log("Opção inválida!");
             break;
-
-
     }
 } while(opcao !== 0);
