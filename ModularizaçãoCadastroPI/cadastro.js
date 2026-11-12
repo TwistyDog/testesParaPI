@@ -1,4 +1,5 @@
 import { Texto } from "./entrada.js";
+import { STATUS, proximoStatus, podeTransitar } from "./status.js";
 
 export let cadastrosCompetidores = [];
 export let cadastroDocente = [];
@@ -26,6 +27,19 @@ function solicitarCampo(mensagem){
     return valor;
 }
 
+// Mostra uma lista numerada e devolve a opção escolhida
+function escolherStatus(mensagem, opcoes) {
+    opcoes.forEach((status, i) => console.log(`${i + 1} - ${status}`));
+    let indice;
+    do {
+        indice = parseInt(Texto(mensagem).trim(), 10) - 1;
+        if (Number.isNaN(indice) || indice < 0 || indice >= opcoes.length) {
+            console.log("Opção inválida!");
+        }
+    } while (Number.isNaN(indice) || indice < 0 || indice >= opcoes.length);
+    return opcoes[indice];
+}
+
 function cadasPessoa(tipo, lista){
     let continuar;
     do{
@@ -41,6 +55,11 @@ function cadasPessoa(tipo, lista){
         const curso = solicitarCampo("Informe o curso vinculado: ");
         const ocup = solicitarCampo("Informe sua ocupação: ");
 
+        // Competidor: a coordenação escolhe o status inicial. Docente continua "Ativo".
+        const status = tipo === "Competidor"
+            ? escolherStatus("Escolha o status inicial: ", Object.values(STATUS))
+            : "Ativo";
+
         const cadastroObj = {
             nome,
             nomUsua,
@@ -52,7 +71,7 @@ function cadasPessoa(tipo, lista){
             unidadeOrigem: unidaOrigem,
             curso,
             ocupacao: ocup,
-            status: "Ativo",
+            status,
             tipo
         };
 
@@ -141,3 +160,38 @@ export function ConsultarCompetidor() {
 export function ConsultarDocente() {
     consultarPessoa("Docente", cadastroDocente);
 }
+
+// Atualiza o status de um competidor respeitando as transições permitidas
+export const editarStatus = (perfilUsuario) => {
+    if (!validarPermissaoCadastro(perfilUsuario)) {
+        console.log("\nAcesso Negado: Apenas perfis de Coordenação ou Administrador podem alterar o status!");
+        return;
+    }
+
+    const nome = Texto("Informe o nome completo do competidor: ");
+    const dataNasc = Texto("Informe a data de nascimento: ");
+    const competidor = BuscarUsuarioPorNome(nome, dataNasc, cadastrosCompetidores);
+
+    if (competidor === null) {
+        console.log("\nCompetidor não encontrado!");
+        return;
+    }
+
+    const opcoes = proximoStatus(competidor.status);
+    console.log(`\nStatus atual de ${competidor.nome}: ${competidor.status}`);
+
+    if (opcoes.length === 0) {
+        console.log("Este status é final, não há transições disponíveis.");
+        return;
+    }
+
+    const novoStatus = escolherStatus("Escolha o novo status: ", opcoes);
+
+    if (!podeTransitar(competidor.status, novoStatus)) {
+        console.log("Transição não permitida!");
+        return;
+    }
+
+    competidor.status = novoStatus;
+    console.log(`\nStatus atualizado para: ${novoStatus}`);
+};

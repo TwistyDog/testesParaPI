@@ -5,6 +5,7 @@ import {
     ListarUsuariosCadastrados,
     ConsultarCompetidor,
     ConsultarDocente,
+    editarStatus,
     cadastrosCompetidores,
     cadastroDocente
 } from "./cadastro.js";
@@ -33,16 +34,17 @@ let opcao;
 do {
     console.log("\n============== SISTEMA DE CADASTRO DE COMPETIDORES =================");
     
-    // Se for Administrador ou Coordenador, exibe as opções de cadastro. Senão, elas ficam ocultas!
+    // Se for Administrador ou Coordenador, exibe as opções restritas. Senão, elas ficam ocultas!
     if (ehAdministradorOuCoordenador) {
         console.log("1 - Cadastrar competidor");
         console.log("2 - Cadastrar docente");
+        console.log("3 - Atualizar status do competidor");
     }
     
-    console.log("3 - Listar competidor");
-    console.log("4 - Listar docente");
-    console.log("5 - Consultar competidor");
-    console.log("6 - Consultar docente");
+    console.log("4 - Listar competidor");
+    console.log("5 - Listar docente");
+    console.log("6 - Consultar competidor");
+    console.log("7 - Consultar docente");
     console.log("0 - Sair");
 
     opcao = Numero("Escolha uma opcao: ");
@@ -78,6 +80,14 @@ do {
 
         case 6:
             ConsultarDocente();
+            break;
+
+        case 7:
+            if (!ehAdministradorOuCoordenador) {
+                console.log("Opção inválida!");
+                break;
+            }
+            editarStatus(perfilLogado);
             break;
 
         case 0:
