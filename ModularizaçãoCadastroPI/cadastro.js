@@ -72,7 +72,8 @@ function cadasPessoa(tipo, lista){
             curso,
             ocupacao: ocup,
             status,
-            tipo
+            tipo,
+            perfil: "ex-competidor"
         };
 
         lista.push(cadastroObj);
