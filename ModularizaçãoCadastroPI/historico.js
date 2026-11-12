@@ -1,9 +1,9 @@
+import { question } from "readline-sync";
+import { CadastrarDocente, cadastroDocente } from "./cadastro.js";
 
-const readline = require("readline-sync");
+export function validarAcesso(competidor) {
 
-function validarAcesso(competidor) {
-
-    if (!competidor || !competidor.id) {
+    if (!competidor || !competidor.nome) {
         console.log("\nAcesso negado: usuário não autenticado.");
         return false;
     }
@@ -16,7 +16,7 @@ function validarAcesso(competidor) {
     return true;
 }
 
-function filtrarRegistros(registros, competidorId) {
+export function filtrarRegistros(registros, competidorId) {
 
     if (!Array.isArray(registros)) {
         return [];
@@ -28,7 +28,7 @@ function filtrarRegistros(registros, competidorId) {
 }
 
 
-function exibirParticipacoes(participacoes) {
+export function exibirParticipacoes(participacoes) {
 
     console.log("\n========== HISTÓRICO DE PARTICIPAÇÕES ==========");
 
@@ -39,16 +39,16 @@ function exibirParticipacoes(participacoes) {
 
     participacoes.forEach((item, indice) => {
 
-        console.log(`\n${indice + 1}. ${item.competicao || "Não informada"}`);
-        console.log(`Ocupação: ${item.ocupacao || "Não informada"}`);
-        console.log(`Período: ${item.periodo || "Não informado"}`);
-        console.log(`Resultado: ${item.resultado || "Não informado"}`);
-        console.log(`Status: ${item.status || "Não informado"}`);
+        console.log(`\n${indice + 1}. ${item.competicao || "Nao informada"}`);
+        console.log(`Ocupação: ${item.ocupacao || "Nao informada"}`);
+        console.log(`Período: ${item.periodo || "Nao informado"}`);
+        console.log(`Resultado: ${item.resultado || "Nao informado"}`);
+        console.log(`Status: ${item.status || "Nao informado"}`);
 
     });
 }
 
-function exibirTreinamentos(treinamentos) {
+export function exibirTreinamentos(treinamentos) {
 
     console.log("\n========== HISTÓRICO DE TREINAMENTOS ==========");
 
@@ -69,7 +69,7 @@ function exibirTreinamentos(treinamentos) {
 }
 
 
-function exibirAvaliacoes(avaliacoes) {
+export function exibirAvaliacoes(avaliacoes) {
 
     console.log("\n========== HISTÓRICO DE AVALIAÇÕES ==========");
 
@@ -90,7 +90,7 @@ function exibirAvaliacoes(avaliacoes) {
     });
 }
 
-function consultarHistorico(competidor, dadosHistorico) {
+export function consultarHistorico(competidor, dadosHistorico) {
 
     if (!validarAcesso(competidor)) {
         return null;
@@ -118,7 +118,7 @@ function consultarHistorico(competidor, dadosHistorico) {
     };
 }
 
-function exibirHistorico(competidor, dadosHistorico) {
+export function exibirHistorico(competidor, dadosHistorico) {
 
     const historico = consultarHistorico(
         competidor,
@@ -132,16 +132,15 @@ function exibirHistorico(competidor, dadosHistorico) {
     console.log("\n============================================");
     console.log("             MEU HISTÓRICO          ");
 
-    console.log(`Competidor: ${competidor.nome || "Não informado"}`);
+    console.log(`Competidor: ${competidor.nome || "Nao informado"}`);
 
     console.log("\nModo de acesso: SOMENTE CONSULTA");
 
-    console.log("Você não possui permissão para cadastrar, editar ou excluir registros.");
+    console.log("Voce nao possui permissao para cadastrar, editar ou excluir registros.");
 
     let opcao;
 
-    do {
-
+    while(true) {
         console.log("\n--------------- MENU DO HISTÓRICO ---------------");
 
         console.log("1 - Consultar participações");
@@ -150,7 +149,7 @@ function exibirHistorico(competidor, dadosHistorico) {
         console.log("4 - Consultar histórico completo");
         console.log("0 - Voltar");
 
-        opcao = readline.question("\nEscolha uma opção: ").trim();
+        opcao = question("\nEscolha uma opçao: ").trim();
 
         switch (opcao) {
 
@@ -174,18 +173,7 @@ function exibirHistorico(competidor, dadosHistorico) {
 
             case "0":
                 console.log("\nRetornando ao menu anterior...");
-                break;
-
-            default:
-                console.log("\nOpção inválida. Tente novamente.");
-
+                return;
         }
-
-    } while (opcao !== "0");
-
+    }
 }
-
-module.exports = {
-    consultarHistorico,
-    exibirHistorico
-};

@@ -10,6 +10,9 @@ import {
     cadastroDocente
 } from "./cadastro.js";
 
+// Importando as funções do histórico
+import { exibirHistorico } from "./historico.js";
+
 // Identifica o perfil de quem está acessando o sistema (aceita número ou texto)
 console.log("\n=== AUTENTICAÇÃO DO SISTEMA ===");
 console.log("1 - Administrador");
@@ -34,7 +37,7 @@ let opcao;
 do {
     console.log("\n============== SISTEMA DE CADASTRO DE COMPETIDORES =================");
     
-    // Se for Administrador ou Coordenador, exibe as opções restritas. Senão, elas ficam ocultas!
+    // Se for Administrador ou Coordenador, exibe as opções restritas.
     if (ehAdministradorOuCoordenador) {
         console.log("1 - Cadastrar competidor");
         console.log("2 - Cadastrar docente");
@@ -45,6 +48,9 @@ do {
     console.log("5 - Listar docente");
     console.log("6 - Consultar competidor");
     console.log("7 - Consultar docente");
+    
+    // Opção de histórico disponível para competidores/ex-competidores (ou admins se desejado)
+    console.log("8 - Consultar meu histórico (Ex-competidor)");
     console.log("0 - Sair");
 
     opcao = Numero("Escolha uma opcao: ");
@@ -67,28 +73,51 @@ do {
             break;
 
         case 3:
-            ListarUsuariosCadastrados(cadastrosCompetidores);
-            break;
-
-        case 4:
-            ListarUsuariosCadastrados(cadastroDocente);
-            break;
-
-        case 5:
-            ConsultarCompetidor();
-            break;
-
-        case 6:
-            ConsultarDocente();
-            break;
-
-        case 7:
             if (!ehAdministradorOuCoordenador) {
                 console.log("Opção inválida!");
                 break;
             }
             editarStatus(perfilLogado);
             break;
+
+        case 4:
+            ListarUsuariosCadastrados(cadastrosCompetidores);
+            break;
+
+        case 5:
+            ListarUsuariosCadastrados(cadastroDocente);
+            break;
+
+        case 6:
+            ConsultarCompetidor();
+            break;
+
+        case 7:
+            ConsultarDocente();
+            break;
+
+        case 8: {
+            console.log("\nIdentificação para acesso ao Histórico:");
+            const nomeCompetidor = Texto("Informe seu nome completo: ");
+            
+            const competidorEncontrado = cadastrosCompetidores.find(
+                c => c.nome === nomeCompetidor
+            );
+
+            if (!competidorEncontrado) {
+                console.log("\nCompetidor não encontrado nos cadastros.");
+                break;
+            }
+
+            const dadosHistoricoExemplo = {
+                participacoes: [],
+                treinamentos: [],
+                avaliacoes: []
+            };
+
+            exibirHistorico(competidorEncontrado, dadosHistoricoExemplo);
+            break;
+        }
 
         case 0:
             console.log("Encerrando o sistema...");
