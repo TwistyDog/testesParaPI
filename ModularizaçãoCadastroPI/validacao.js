@@ -14,7 +14,7 @@ export const validarSenha = (v) => REGEX.senha.test(v)
 export const validarEmail = (v) => REGEX.email.test(v)
 
 //remover tudo o que não for número
-export const validarTelefone = (v) => REGEX.telefone.test(v)
+export const validarTelefone = (v) => REGEX.telefone.test(v.replace(/\D/g, ""))
 
 export function validarData(valor) {
     const m = REGEX.data.exec(valor)
@@ -32,17 +32,5 @@ export function validarData(valor) {
 export function validarCPF(valor) {
     if (!REGEX.cpf.test(valor)) return false
     const cpf = valor.replace(/\D/g, "")
-    if (/^(\d)\1{10}$/.test(cpf)) return false
-
-    const digitos = cpf.split("").map(Number)
-    
-    function calcularDigitoVerificador(quantidade) {
-        let soma = 0
-        digitos.slice(0, quantidade).forEach((digito, i) =>{
-            soma += digito * (quantidade + 1 - 1)
-        })
-        return ((soma * 10) % 11) % 10
-    }; 
-
-    return calcularDigitoVerificador(9) === digitos[9] && calcularDigitoVerificador(10) === digitos[10] 
+    return !/^(\d)1{10}$/.test(cpf)
 }

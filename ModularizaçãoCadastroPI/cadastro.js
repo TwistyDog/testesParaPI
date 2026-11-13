@@ -74,7 +74,7 @@ function cadasPessoa(tipo, lista){
         );
         const unidaOrigem = solicitarCampo("Informe a unidade de origem: ");
         const curso = solicitarCampo("Informe o curso vinculado: ");
-        const ocup = solicitarCampo("Informe sua ocupação: ");
+        const ocup = solicitarCampo("Informe sua ocupacao: ");
 
         // Competidor: a coordenação escolhe o status inicial. Docente continua "Ativo".
         const status = tipo === "Competidor"
