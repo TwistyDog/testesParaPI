@@ -1,5 +1,6 @@
 import { Texto } from "./entrada.js";
 import { STATUS, proximoStatus, podeTransitar } from "./status.js";
+import { validarCPF, validarData, validarEmail, validarNome, validarSenha, validarTelefone, validarUsuario } from "./validacao.js";
 
 export let cadastrosCompetidores = [];
 export let cadastroDocente = [];
@@ -16,14 +17,20 @@ function validarPermissaoCadastro(perfil) {
 }
 
 // Garante apenas que o campo não seja vazio
-function solicitarCampo(mensagem){
+function solicitarCampo(mensagem, validar = null, erro = "Valor invalido!"){
     let valor;
+    let ok
     do{
         valor = Texto(mensagem).trim();
-        if (valor === ""){
-            console.log("Este campo é obrigatório!");
+        ok = valor != ""
+        if(!ok){
+            console.log("Este campo é obrigado!");
+            
+        } else if (validar && !validar(valor)) {
+            ok = false
+            console.log(erro); 
         }
-    } while (valor === "");
+    } while (!ok);
     return valor;
 }
 
@@ -44,13 +51,27 @@ function cadasPessoa(tipo, lista){
     let continuar;
     do{
         console.log(`\n=================== Cadastro de ${tipo.toUpperCase()} ===================`);
-        const nome = solicitarCampo("Informe seu nome completo: ");
-        const nomUsua = solicitarCampo("Informe seu nome de usuário: ");
-        const infoSenha = solicitarCampo("Crie sua senha: ");
-        const infoCPF = solicitarCampo("Informe o CPF: ");
-        const dataNas = solicitarCampo("Informe a data de nascimento: ");
-        const infoEmail = solicitarCampo("Informe seu e-mail: ");
-        const infoCel = solicitarCampo("Informe seu telefone para contato: ");
+        const nome = solicitarCampo("Informe seu nome completo: ", validarNome,
+            "Digite seu nome completo, apenas letras."
+        ) ;
+        const nomUsua = solicitarCampo("Informe seu nome de usuario: ", validarUsuario,
+            "Use de 3 a 20 caracteres: letras, numeros, _ ou pontos."
+        );
+        const infoSenha = solicitarCampo("Crie sua senha: ", validarSenha,
+            "A senha precisa ter no minimo 8 caracteres, com letras e numeros."
+        );
+        const infoCPF = solicitarCampo("Informe o CPF: ", validarCPF,
+            "CPF invalido!"
+        );
+        const dataNas = solicitarCampo("Informe a data de nascimento: ", validarData,
+            "Data invalida! Use o formato DD/MM/AAAA."
+        );
+        const infoEmail = solicitarCampo("Informe seu e-mail: ", validarEmail,
+            "E-mail invalido!"
+        );
+        const infoCel = solicitarCampo("Informe seu telefone para contato: ", validarTelefone,
+            "Telefone invalido! Exemplo: (91) 98888-7777"
+        );
         const unidaOrigem = solicitarCampo("Informe a unidade de origem: ");
         const curso = solicitarCampo("Informe o curso vinculado: ");
         const ocup = solicitarCampo("Informe sua ocupação: ");
